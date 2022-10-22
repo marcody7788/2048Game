@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ViewModels="clr-namespace:_2048Game.ViewModels"
+             xmlns:Models="clr-namespace:_2048Game.Models"
+             xmlns:Converters="clr-namespace:_2048Game.Converters"
+             x:Class="_2048Game.Views.GameView"
+             Title="GameView">
+    <ContentPage.Resources>
+        <Converters:IntToColumnDefinitionsConverter x:Key="gameSizeToColumnDefinitions" />
+        <Converters:IntToRowDefinitionsConverter x:Key="gameSizeToRowDefinitions" />
+        <Converters:GameStateToStringConverter x:Key="gameStateText" />
+        <Converters:GameCellNumberToStringConverter x:Key="numberRepresentation" />
+        <Converters:GameStateToStartButtonStringConverter x:Key="getStartButtonText" />
+        <Converters:GameStateToEnabledConverter x:Key="moveIsEnabled" />
+        <Converters:NumberToColorConverter x:Key="numberToColor" />
+    </ContentPage.Resources>
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        <Button Text="{Binding Game.State, Converter={StaticResource getStartButtonText}}" FontSize="Title" Command="{Binding StartGame}"/>
+        <Label Text="{Binding Game.State, Converter={x:StaticResource gameStateText }}"/>
+        <SwipeView >
+            <SwipeView.GestureRecognizers>
+                <SwipeGestureRecognizer Direction="Left" Swiped="SwipeGestureRecognizer_Swiped"/>
+                <SwipeGestureRecognizer Direction="Right" Swiped="SwipeGestureRecognizer_Swiped"/>
+                <SwipeGestureRecognizer Direction="Up" Swiped="SwipeGestureRecognizer_Swiped"/>
+                <SwipeGestureRecognizer Direction="Down" Swiped="SwipeGestureRecognizer_Swiped"/>
+            </SwipeView.GestureRecognizers>
+
+            <Grid x:Name="grdGameCells" 
+                  BindableLayout.ItemsSource="{Binding Game.GameCells}"
+                  ColumnDefinitions="{Binding Path= Game.Size , Converter={StaticResource gameSizeToColumnDefinitions }}"
+                  RowDefinitions="{Binding Path= Game.Size, Converter= {StaticResource gameSizeToRowDefinitions }}" 
+                  ColumnSpacing="2"
+                  RowSpacing="2">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Label FontSize="Title" 
+                               FontAttributes="Bold"
+                               Text="{Binding Number, Converter= {StaticResource numberRepresentation }}"
+                               Grid.Column="{Binding Column}"
+                               Grid.Row = "{Binding Row}"
+                               WidthRequest="90"
+                               HeightRequest="90"
+                               BackgroundColor="{Binding Number, Converter= {StaticResource numberToColor}}"
+                               TextColor="WhiteSmoke"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               >
+                        </Label>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </Grid>
+
+        </SwipeView>
+        <!--<VerticalStackLayout HorizontalOptions="Center" Margin="0,50,0,0">
+            <Button Text="🔼" WidthRequest="50" HeightRequest="50" Command="{Binding MoveUp}"  IsEnabled="{Binding Game.State, Converter={StaticResource moveIsEnabled}}"/>
+            <HorizontalStackLayout>
+                <Button Text="◀️" WidthRequest="50" HeightRequest="50"  Command="{Binding MoveLeft}"  IsEnabled="{Binding Game.State, Converter={StaticResource moveIsEnabled}}"/>
+                <Button Text="🔽" WidthRequest="50" HeightRequest="50" Command="{Binding MoveDown}"  IsEnabled="{Binding Game.State, Converter={StaticResource moveIsEnabled}}"/>
+                <Button Text="▶️" WidthRequest="50" HeightRequest="50"  Command="{Binding MoveRight}"  IsEnabled="{Binding Game.State, Converter={StaticResource moveIsEnabled}}"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>-->
+    </VerticalStackLayout>
+</ContentPage>
